@@ -10,3 +10,7 @@ const getBalance = async (req, res) => {
         balance: account.balance
     })
 }
+
+export {
+    getBalance,
+}

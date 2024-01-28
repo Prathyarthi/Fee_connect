@@ -1,6 +1,8 @@
 import jwt from "jsonwebtoken";
 import { config } from "dotenv"
 config()
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { ApiError } from "../utils/ApiError.js"
 
 const authMiddleware = (req, res, next) => {
     const authHeader = req.headers.authorization;
@@ -28,7 +30,16 @@ const authMiddleware = (req, res, next) => {
         });
     }
 };
+const adminMiddleware = (...roles) =>
+    asyncHandler(async (req, res, next) => {
+        if (!roles.includes(req.user.role)) {
+            return next(new ApiError("You don't have permission to access this route", 403))
+        }
+        next()
+    })
+
 
 export {
-    authMiddleware
+    authMiddleware,
+    adminMiddleware
 }

@@ -9,6 +9,19 @@ const accountSchema = new Schema({
     balance: {
         type: Number,
         required: true
+    },
+    amount: {
+        type: Number,
+        required: true
+    },
+    dueDate: {
+        type: Date,
+        required: true
+    },
+    paymentStatus: {
+        type: String,
+        enum: ['unpaid', 'paid'],
+        default:'unpaid'
     }
 })
 

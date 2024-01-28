@@ -20,6 +20,21 @@ const userSchema = new Schema({
         type: String,
         minlength: 8,
         required: [true, "Can't be blank"],
+    },
+    role: {
+        type: String,
+        enum: ['USER', 'ADMIN'],
+        default: 'USER',
+    },
+    semester: {
+        type: String,
+        required: true
+    },
+    usn: {
+        type: String,
+        required: true,
+        length: 10,
+        unique: true
     }
 }, { timestamps: true })
 

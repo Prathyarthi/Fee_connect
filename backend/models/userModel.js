@@ -1,4 +1,5 @@
 import mongoose, { Schema } from 'mongoose'
+import bcrypt from 'bcrypt'
 
 const userSchema = new Schema({
     firstName: {
@@ -26,16 +27,16 @@ const userSchema = new Schema({
         enum: ['USER', 'ADMIN'],
         default: 'USER',
     },
-    semester: {
-        type: String,
-        required: true
-    },
-    usn: {
-        type: String,
-        required: true,
-        length: 10,
-        unique: true
-    }
+    // semester: {
+    //     type: String,
+    //     required: true
+    // },
+    // usn: {
+    //     type: String,
+    //     required: true,
+    //     length: 10,
+    //     unique: true
+    // }
 }, { timestamps: true })
 
 userSchema.pre('save', async function (next) {

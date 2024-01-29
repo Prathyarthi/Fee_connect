@@ -1,7 +1,7 @@
 import { config } from 'dotenv'
 config()
-import app from './app'
-import connectToDB from './db'
+import app from './app.js'
+import connectToDB from './db/index.js'
 
 app.use('/', (req, res) => {
     res.send("Hello World")

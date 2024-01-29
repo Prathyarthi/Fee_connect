@@ -1,5 +1,10 @@
 import zod from 'zod'
-import { User } from '../models/userModel';
+import { User } from '../models/userModel.js';
+import jwt from "jsonwebtoken";
+import { config } from 'dotenv';
+config();
+
+
 const signupSchema = zod.object({
     firstName: zod.string(),
     lastName: zod.string(),
@@ -7,25 +12,26 @@ const signupSchema = zod.object({
     password: zod.string().min(8)
 })
 
+
 const signup = async (req, res) => {
     const { firstName, lastName, email, password } = req.body;
-
-    const signupParsed = signupSchema.safeParse(req.body)
-
-    if (!signupParsed.success) {
-        return res.status(400).json({
-            success: false,
-            message: "Every field is required "
-        });
-    }
-
     try {
+
+        const signupParsed = signupSchema.safeParse(req.body)
+
+        if (!signupParsed.success) {
+            return res.status(400).json({
+                success: false,
+                message: "Every field is required "
+            });
+        }
+
         const userExists = await User.findOne({
             email
         })
 
         if (userExists) {
-            return res.status(411).send("User already exists")
+            return res.status(409).send("User already exists")
         }
 
         const user = await User.create({
@@ -35,17 +41,18 @@ const signup = async (req, res) => {
             lastName
         })
 
+        console.log("User created");
         if (!user) {
             return res.status(500).send("Server Error")
         }
-
-        user.save()
 
         const userId = user._id
 
         const token = jwt.sign({
             userId
         }, process.env.JWT_SECRET)
+
+        res.cookie("token", token)
 
         return res.status(200).json({
             success: true,
@@ -102,6 +109,8 @@ const signin = async (req, res) => {
             userId: userExists._id
         }, process.env.JWT_SECRET)
 
+        res.cookie("token", token)
+
         res.status(200).json({
             success: true,
             message: "User logged in successfully",
@@ -118,7 +127,7 @@ const signin = async (req, res) => {
 
 
 const getUser = async (req, res) => {
-    const userId = req._id;
+    const userId = req.userId;
     try {
         const user = await User.findById(userId);
         return res.status(200).json({
@@ -133,8 +142,20 @@ const getUser = async (req, res) => {
     }
 };
 
+const logout = async (req, res) => {
+    try {
+        res.clearCookie("token")
+    } catch (e) {
+        return res.status(400).json({
+            success: false,
+            message: error.message
+        });
+    }
+}
+
 export {
     signup,
     signin,
-    getUser
+    getUser,
+    logout
 }

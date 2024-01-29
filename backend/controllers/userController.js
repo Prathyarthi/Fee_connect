@@ -60,15 +60,10 @@ const signup = async (req, res) => {
             token: token
         })
     } catch (error) {
-        if (error.code === 11000) {
-            return res.status(400).json({
-                success: false,
-                message: `Account already exist with the provided email ${email}`
-            });
-        }
-
+        console.log(error);
         return res.status(400).json({
-            message: error.message
+            success: false,
+            message: `Account already exist with the provided email ${email}`
         });
     }
 };

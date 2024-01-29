@@ -1,9 +1,9 @@
 import mongoose, { Schema } from "mongoose";
 
 const accountSchema = new Schema({
-    userId: {
+    studentId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        ref: "Student",
         required: true
     },
     balance: {
@@ -21,7 +21,7 @@ const accountSchema = new Schema({
     paymentStatus: {
         type: String,
         enum: ['unpaid', 'paid'],
-        default:'unpaid'
+        default: 'unpaid'
     }
 })
 

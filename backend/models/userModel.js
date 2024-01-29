@@ -27,16 +27,6 @@ const userSchema = new Schema({
         enum: ['USER', 'ADMIN'],
         default: 'USER',
     },
-    // semester: {
-    //     type: String,
-    //     required: true
-    // },
-    // usn: {
-    //     type: String,
-    //     required: true,
-    //     length: 10,
-    //     unique: true
-    // }
 }, { timestamps: true })
 
 userSchema.pre('save', async function (next) {

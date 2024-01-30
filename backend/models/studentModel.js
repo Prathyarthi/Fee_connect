@@ -13,12 +13,11 @@ const studentSchema = new Schema({
     },
     email: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: [true, "Can't be blank"]
+        ref: 'User'
     },
     role: {
         type: String,
-        enum: ['USER', 'ADMIN'],
+        enum: ['USER', 'ADMIN', 'STUDENT'],
         default: 'USER',
     },
     semester: {

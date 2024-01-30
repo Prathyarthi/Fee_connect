@@ -2,10 +2,9 @@ import zod from 'zod'
 import { ApiError } from '../utils/ApiError.js'
 import { ApiResponse } from '../utils/ApiResponse.js'
 import { Student } from '../models/studentModel.js';
+import { asyncHandler } from '../utils/asyncHandler.js';
 
 const createSchema = zod.object({
-    firstName: zod.string(),
-    lastName: zod.string(),
     semester: zod.number(1),
     usn: zod.string(10),
     department: zod.string(),
@@ -13,8 +12,8 @@ const createSchema = zod.object({
 })
 
 
-const createStudent = async (req, res) => {
-    const { firstName, lastName, semester, usn, department, phone } = req.body;
+const createStudent = asyncHandler(async (req, res, next) => {
+    const { semester, usn, department, phone } = req.body;
 
     const createSchemaParsed = createSchema.safeParse(req.body)
 
@@ -23,8 +22,6 @@ const createStudent = async (req, res) => {
     }
 
     const student = await Student.create({
-        firstName,
-        lastName,
         semester,
         usn,
         department,
@@ -44,9 +41,9 @@ const createStudent = async (req, res) => {
     }
 
     return next(new ApiResponse("Student created successfully!", 200))
-}
+})
 
-const getAllStudents = async (req, res) => {
+const getAllStudents = asyncHandler(async (req, res, next) => {
     const students = await Student.find({})
 
     if (!students) {
@@ -54,7 +51,7 @@ const getAllStudents = async (req, res) => {
     }
 
     return next(new ApiResponse('User fetched successfully', 200, students))
-}
+})
 
 export {
     createStudent,

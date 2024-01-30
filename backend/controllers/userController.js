@@ -49,7 +49,8 @@ const signup = async (req, res) => {
         const userId = user._id
 
         const token = jwt.sign({
-            userId
+            userId,
+            role: user.role
         }, process.env.JWT_SECRET)
 
         res.cookie("token", token)
@@ -57,7 +58,8 @@ const signup = async (req, res) => {
         return res.status(200).json({
             success: true,
             message: "User created successfully",
-            token: token
+            token: token,
+            user
         })
     } catch (error) {
         console.log(error);
@@ -101,7 +103,8 @@ const signin = async (req, res) => {
         }
 
         const token = jwt.sign({
-            userId: userExists._id
+            userId: userExists._id,
+            role: userExists.role
         }, process.env.JWT_SECRET)
 
         res.cookie("token", token)
@@ -109,7 +112,8 @@ const signin = async (req, res) => {
         res.status(200).json({
             success: true,
             message: "User logged in successfully",
-            token: token
+            token: token,
+            userExists
         })
         return
     } catch (error) {

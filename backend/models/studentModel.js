@@ -4,21 +4,14 @@ const studentSchema = new Schema({
     firstName: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: true
     },
     lastName: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: true
     },
     email: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
-    },
-    role: {
-        type: String,
-        enum: ['USER', 'ADMIN', 'STUDENT'],
-        default: 'USER',
+        ref: 'User',
     },
     semester: {
         type: String,
@@ -35,7 +28,7 @@ const studentSchema = new Schema({
         required: true
     },
     phone: {
-        tytype: String,
+        type: String,
         required: true,
         length: 10
     }

@@ -20,8 +20,7 @@ const studentSchema = new Schema({
     usn: {
         type: String,
         required: true,
-        length: 10,
-        unique: true
+        unique: true,
     },
     department: {
         type: String,

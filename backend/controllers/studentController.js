@@ -14,43 +14,51 @@ const createSchema = zod.object({
 
 const createStudent = asyncHandler(async (req, res, next) => {
     const { semester, usn, department, phone } = req.body;
+    try {
+        const createSchemaParsed = createSchema.safeParse(req.body)
 
-    const createSchemaParsed = createSchema.safeParse(req.body)
+        if (!createSchemaParsed.success) {
+            throw new ApiError(400, "All fields are required")
+        }
 
-    if (!createSchemaParsed.success) {
-        return next(new ApiError('All fields are required!', 400))
+        const student = await Student.create({
+            semester,
+            usn,
+            department,
+            phone
+        })
+
+        const studentExists = await Student.findOne({
+            usn
+        })
+
+        if (studentExists) {
+            throw new ApiError(400, "Student already exists")
+        }
+
+        if (!student) {
+            throw new ApiError(400, "Couldn't create student")
+        }
+
+        return res.json(
+            new ApiResponse(200, "Student created successfully")
+        )
+    } catch (error) {
+        console.log(error);
+        throw new ApiError(500, "Something went wrong", error)
     }
-
-    const student = await Student.create({
-        semester,
-        usn,
-        department,
-        phone
-    })
-
-    const studentExists = await Student.findOne({
-        usn
-    })
-
-    if (studentExists) {
-        return next(new ApiError('Student already exists!', 400))
-    }
-
-    if (!student) {
-        return next(new ApiError("Couldn't create student", 400));
-    }
-
-    return next(new ApiResponse("Student created successfully!", 200))
 })
 
 const getAllStudents = asyncHandler(async (req, res, next) => {
     const students = await Student.find({})
 
     if (!students) {
-        return next(new ApiError('Could not fetch all students!', 400))
+        throw new ApiError(400, 'Could not fetch all students!')
     }
 
-    return next(new ApiResponse('User fetched successfully', 200, students))
+    return res.json(
+        new ApiResponse(200, students, "Students fetched successfully")
+    )
 })
 
 export {

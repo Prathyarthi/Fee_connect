@@ -3,6 +3,7 @@ import { User } from '../models/userModel.js';
 import jwt from "jsonwebtoken";
 import { config } from 'dotenv';
 import { ApiResponse } from '../utils/ApiResponse.js';
+import { ApiError } from '../utils/ApiError.js';
 config();
 
 
@@ -130,6 +131,11 @@ const getUser = async (req, res) => {
     const userId = req.userId;
     try {
         const user = await User.findById(userId).select("-password");
+
+        if (!user) {
+            throw new ApiError(400, "user doesn't exists")
+        }
+
         return res.status(200).json({
             success: true,
             data: user

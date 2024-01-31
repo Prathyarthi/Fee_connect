@@ -61,7 +61,30 @@ const getAllStudents = asyncHandler(async (req, res, next) => {
     )
 })
 
+const getStudentById = asyncHandler(async (req, res, next) => {
+    const studentId = req.params.id
+    console.log(studentId);
+
+    try {
+        const student = await Student.findById(studentId)
+
+        console.log(student);
+        if (!student) {
+            throw new ApiError(400, "Student not found!")
+        }
+
+        return res.status(200).json(
+            new ApiResponse(200, student, "Student details fetched!")
+        )
+    } catch (error) {
+        console.log(error);
+        throw new ApiError(400, "Something went wrong")
+    }
+})
+
+
 export {
     createStudent,
-    getAllStudents
+    getAllStudents,
+    getStudentById
 }

@@ -32,24 +32,6 @@ const authMiddleware = asyncHandler(async (req, res, next) => {
         throw new ApiError(403, "Unauthorized, please login to continue", err);
     }
 });
-// const adminMiddleware = (...roles) =>
-//     asyncHandler(async (req, res, next) => {
-//         const { token } = req.cookies;
-
-//         if (!token) {
-//             return next(new ApiError("Unauthorized, please login to continue", 401));
-//         }
-//         const decodedRole = jwt.verify(token, process.env.JWT_SECRET);
-//         if (decodedRole.role) {
-//             console.log(decodedRole.role);
-//             req.user.role = decodedRole.role;
-//         }
-//         console.log(req.user.role);
-//         if (!roles.includes(req.user.role)) {
-//             return next(new ApiError("You don't have permission to access this route", 403))
-//             next()
-//         }
-//     })
 
 const adminMiddleware = (...roles) =>
     asyncHandler(async (req, res, next) => {

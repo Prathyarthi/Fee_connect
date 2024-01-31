@@ -30,6 +30,12 @@ const studentSchema = new Schema({
         type: String,
         required: true,
         length: 10
+    },
+    seat: {
+        type: String,
+        required: true,
+        enum: ["MANAGEMENT", "KCET", "COMED-K", "OTHER"],
+        default: "MANAGEMENT"
     }
 }, { timestamps: true })
 

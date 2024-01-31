@@ -3,8 +3,11 @@ import mongoose, { Schema } from "mongoose";
 const accountSchema = new Schema({
     studentId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Student",
-        required: true
+        ref: "Student"
+    },
+    seat: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Student"
     },
     balance: {
         type: Number,

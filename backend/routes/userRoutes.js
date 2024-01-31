@@ -1,12 +1,12 @@
 import express from 'express'
 import { getUser, logout, signin, signup } from '../controllers/userController.js'
-import { authMiddleware } from '../middlewares/authMiddleware.js'
+import { isLoggedIn } from '../middlewares/authMiddleware.js'
 
 const router = express.Router()
 
 router.post('/signup', signup)
 router.post('/signin', signin)
-router.get('/getUser', authMiddleware, getUser)
-router.delete('/logout', authMiddleware, logout)
+router.get('/getUser', isLoggedIn, getUser)
+router.delete('/logout', isLoggedIn, logout)
 
 export default router

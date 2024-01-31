@@ -4,7 +4,7 @@ config()
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js"
 
-const authMiddleware = asyncHandler(async (req, res, next) => {
+const isLoggedIn = asyncHandler(async (req, res, next) => {
     // const authHeader = req.headers.authorization;
 
     // if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -66,6 +66,6 @@ const adminMiddleware = (...roles) =>
 
 
 export {
-    authMiddleware,
+    isLoggedIn,
     adminMiddleware
 }

@@ -8,12 +8,13 @@ const createSchema = zod.object({
     semester: zod.number(1),
     usn: zod.string(10),
     department: zod.string(),
-    phone: zod.string(10)
+    phone: zod.string(10),
+    seat: zod.string()
 })
 
 
 const createStudent = asyncHandler(async (req, res, next) => {
-    const { semester, usn, department, phone } = req.body;
+    const { semester, usn, department, phone, seat } = req.body;
     try {
         const createSchemaParsed = createSchema.safeParse(req.body)
 
@@ -25,7 +26,8 @@ const createStudent = asyncHandler(async (req, res, next) => {
             semester,
             usn,
             department,
-            phone
+            phone,
+            seat
         })
 
         const studentExists = await Student.findOne({

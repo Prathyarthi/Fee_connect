@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const paymentSchema = new mongoose.Schema({
+    studentId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Student"
+    },
     feeId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Account',

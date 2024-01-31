@@ -2,6 +2,7 @@ import zod from 'zod'
 import { User } from '../models/userModel.js';
 import jwt from "jsonwebtoken";
 import { config } from 'dotenv';
+import { ApiResponse } from '../utils/ApiResponse.js';
 config();
 
 
@@ -128,7 +129,7 @@ const signin = async (req, res) => {
 const getUser = async (req, res) => {
     const userId = req.userId;
     try {
-        const user = await User.findById(userId);
+        const user = await User.findById(userId).select("-password");
         return res.status(200).json({
             success: true,
             data: user
@@ -144,10 +145,14 @@ const getUser = async (req, res) => {
 const logout = async (req, res) => {
     try {
         res.clearCookie("token")
+
+        res.json(
+            new ApiResponse(200, "Logout successfull")
+        )
     } catch (e) {
         return res.status(400).json({
             success: false,
-            message: error.message
+            message: e.message
         });
     }
 }

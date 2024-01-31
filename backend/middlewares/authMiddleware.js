@@ -19,7 +19,7 @@ const authMiddleware = asyncHandler(async (req, res, next) => {
     const { token } = req.cookies;
 
     if (!token) {
-        return next(new ApiError("Unauthorized, please login to continue", 401));
+        throw new ApiError(400, "Unauthorized, please login to continue");
     }
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -29,10 +29,7 @@ const authMiddleware = asyncHandler(async (req, res, next) => {
         }
 
     } catch (err) {
-        return res.status(403).json({
-            success: false,
-            message: "Could not verify the token"
-        });
+        throw new ApiError(403, "Unauthorized, please login to continue", err);
     }
 });
 // const adminMiddleware = (...roles) =>
@@ -59,14 +56,14 @@ const adminMiddleware = (...roles) =>
         const { token } = req.cookies;
 
         if (!token) {
-            return next(new ApiError("Unauthorized, please login to continue", 401));
+            throw new ApiError(400, "Unauthorized, please login to continue");
         }
 
         try {
             const decodedRole = jwt.verify(token, process.env.JWT_SECRET);
 
             if (!decodedRole.role) {
-                return next(new ApiError("Role information not found in the token", 403));
+                throw new ApiError(403, "Role information not found in the token");
             }
 
             // Assuming req.user is an object, initialize it if not present
@@ -76,13 +73,12 @@ const adminMiddleware = (...roles) =>
             console.log(req.user.role);
 
             if (!roles.includes(req.user.role)) {
-                return next(new ApiError("You don't have permission to access this route", 403));
+                throw new ApiError(403, "You don't have permission to access this route");
             }
 
-            // Only call next() if the user has the required role
             next();
         } catch (err) {
-            return next(new ApiError("Could not verify the token", 403));
+            throw new ApiError(403, "Could not verify the token");
         }
     });
 

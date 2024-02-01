@@ -5,6 +5,18 @@ const paymentSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Student"
     },
+    balance: {
+        type: Number,
+        required: true
+    },
+    firstName: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+    },
+    lastName: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+    },
     feeId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Account',

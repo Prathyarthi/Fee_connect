@@ -3,6 +3,8 @@ import { ApiError } from '../utils/ApiError.js'
 import { ApiResponse } from '../utils/ApiResponse.js'
 import { Student } from '../models/studentModel.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
+import { Account, Account } from '../models/accountModel.js';
+import { Payment } from '../models/paymentModel.js';
 
 const createSchema = zod.object({
     semester: zod.number(1),
@@ -41,6 +43,11 @@ const createStudent = asyncHandler(async (req, res, next) => {
         if (!student) {
             throw new ApiError(400, "Couldn't create student")
         }
+
+        await Payment.create({
+            userId,
+            balance: 1 + Math.random() * 10000
+        })
 
         return res.json(
             new ApiResponse(200, "Student created successfully")

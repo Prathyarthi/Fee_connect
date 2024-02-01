@@ -1,8 +1,10 @@
-import { Payment } from "../models/paymentModel";
-import { Student } from "../models/studentModel";
-import { ApiError } from "../utils/ApiError";
-import { ApiResponse } from "../utils/ApiResponse";
-import { asyncHandler } from "../utils/asyncHandler";
+import { Payment } from "../models/paymentModel.js";
+import { Student } from "../models/studentModel.js";
+import { ApiError } from "../utils/ApiError.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { User } from '../models/userModel.js'
+import mongoose from "mongoose";
 
 const getAllPayments = asyncHandler(async (req, res, next) => {
     const payments = Payment.find({})
@@ -28,24 +30,65 @@ const paymentDetailsById = asyncHandler(async (req, res) => {
 
     const payment = await Payment.find({
         studentId
-    }).populate('studentId',)
+    }).populate('studentId', "firstName", "lastName")
+
+    return res.json(
+        new ApiResponse(200, payment, "Payment details fetched successfully!")
+    )
+})
 
 
+const payFee = asyncHandler(async (req, res) => {
+    const session = await mongoose.startSession();
+
+    session.startTransaction()
+
+    const { amount, to } = req.body;
+
+    const fromAccount = await Student.findOne({
+        userId: req.userId
+    }).session(session)
+
+    if (!fromAccount || !fromAccount.balance < amount) {
+        await session.abortTransaction();
+        throw new ApiError(400, "Insufficient balance or no account present!")
+    }
+
+    const toAccount = await Student.findOne({
+        userId: to
+    }).session(session);
+
+    if (!toAccount) {
+        await session.abortTransaction();
+        throw new ApiError(400, "Invalid account")
+    }
+
+    await Payment.updateOne({
+        userId: req.userId,
+    }, {
+        $inc: {
+            balance: -amount
+        }
+    }).session(session)
 
 
-    // const { studentId } = req.params;
+    await Payment.updateOne({
+        userId: to,
+    }, {
+        $inc: {
+            balance: amount
+        }
+    }).session(session)
 
-    // const isValidStudent = await Student.exists({ _id: studentId });
-    // if (!isValidStudent) {
-    //     throw new ApiError(400, 'Invalid studentId');
-    // }
-
-    // const payments = await Payment.find({ student: studentId }).populate('student', 'firstName lastName');
-    // return res.json(new ApiResponse(200, payments, 'Payments for the student fetched successfully'));
+    await session.commitTransaction();
+    return res.json(
+        new ApiResponse(200, "Tranfer successfull!s")
+    )
 })
 
 
 export {
     getAllPayments,
-    paymentDetailsById
+    paymentDetailsById,
+    payFee
 }

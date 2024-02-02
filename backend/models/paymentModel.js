@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
 const paymentSchema = new mongoose.Schema({
     studentId: {
@@ -20,16 +20,16 @@ const paymentSchema = new mongoose.Schema({
     feeId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Account',
-        required: true,
     },
     amountPaid: {
         type: Number,
-        required: true,
+        default: 0,
+        // required: true,
     },
     paymentDate: {
         type: Date,
         default: Date.now,
     },
-});
+}, { timeseries: true });
 
 export const Payment = mongoose.model('Payment', paymentSchema);

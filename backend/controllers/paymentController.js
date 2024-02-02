@@ -1,21 +1,26 @@
 import { Payment } from "../models/paymentModel.js";
 import { Student } from "../models/studentModel.js";
+import { User } from "../models/userModel.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { User } from '../models/userModel.js'
 import mongoose from "mongoose";
 
 const getAllPayments = asyncHandler(async (req, res, next) => {
-    const payments = Payment.find({})
+    try {
+        const payments = await Payment.find({})
 
-    if (!payments) {
-        throw new ApiError(400, "Couldn't find payments")
+        if (!payments) {
+            throw new ApiError(400, "Couldn't find payments")
+        }
+
+        return res.json(
+            new ApiResponse(200, payments, "Payments fetched successfully!")
+        )
+    } catch (error) {
+        console.log(error);
+        throw new ApiError(400, "Something went wrong", error)
     }
-
-    return res.json(
-        new ApiResponse(200, payments, "Payments fetched successfully!")
-    )
 })
 
 
@@ -54,7 +59,7 @@ const payFee = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Insufficient balance or no account present!")
     }
 
-    const toAccount = await Student.findOne({
+    const toAccount = await User.findOne({
         userId: to
     }).session(session);
 

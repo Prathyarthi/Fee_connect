@@ -1,6 +1,6 @@
 import express from 'express'
 import { createFees, getAllFeeDetails, getBalance } from '../controllers/accountController.js'
-import { isLoggedIn } from '../middlewares/userMiddleware.js'
+import { adminMiddleware, isLoggedIn } from '../middlewares/authMiddleware.js'
 
 const router = express.Router()
 

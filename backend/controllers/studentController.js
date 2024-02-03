@@ -4,25 +4,33 @@ import { ApiResponse } from '../utils/ApiResponse.js'
 import { Student } from '../models/studentModel.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { Payment } from '../models/paymentModel.js';
+import { User } from "../models/userModel.js"
 
 const createSchema = zod.object({
     semester: zod.number(1),
     usn: zod.string(10),
     department: zod.string(),
     phone: zod.string(10),
-    seat: zod.string()
+    seat: zod.string(),
+    // email: zod.string().email()
 })
 
 
 const createStudent = asyncHandler(async (req, res, next) => {
-    const { semester, usn, department, phone, seat } = req.body;
+    const { semester, usn, department, phone, seat, email } = req.body;
     try {
         const createSchemaParsed = createSchema.safeParse(req.body)
-
         if (!createSchemaParsed.success) {
             throw new ApiError(400, "All fields are required")
         }
 
+        const emailExists = await User.findOne({
+            email
+        })
+
+        if (!emailExists) {
+            throw new ApiError(400,"Email doesn't exist")
+        }
 
         const studentExists = await Student.findOne({
             usn
@@ -33,7 +41,8 @@ const createStudent = asyncHandler(async (req, res, next) => {
         }
 
         const student = await Student.create({
-            userId: req.userId,
+            // userId: req.userId,
+            email,
             semester,
             usn,
             department,
@@ -47,7 +56,7 @@ const createStudent = asyncHandler(async (req, res, next) => {
 
         await Payment.create({
             studentId: student._id,
-            balance: 1 + Math.random() * 10000,
+            balance: 1 + Math.random() * 10000,   
         })
 
         return res.json(

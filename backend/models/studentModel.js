@@ -14,8 +14,8 @@ const studentSchema = new Schema({
         ref: 'User',
     },
     email: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        type: String,
+        required: true
     },
     semester: {
         type: String,

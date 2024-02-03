@@ -17,43 +17,44 @@ const createSchema = zod.object({
 const createStudent = asyncHandler(async (req, res, next) => {
     const { semester, usn, department, phone, seat } = req.body;
     try {
-    const createSchemaParsed = createSchema.safeParse(req.body)
+        const createSchemaParsed = createSchema.safeParse(req.body)
 
-    if (!createSchemaParsed.success) {
-        throw new ApiError(400, "All fields are required")
-    }
+        if (!createSchemaParsed.success) {
+            throw new ApiError(400, "All fields are required")
+        }
 
-    const student = await Student.create({
-        semester,
-        usn,
-        department,
-        phone,
-        seat
-    })
 
-    const studentExists = await Student.findOne({
-        usn
-    })
+        const studentExists = await Student.findOne({
+            usn
+        })
 
-    // if (studentExists) {
-    //     throw new ApiError(400, "Student already exists")
-    // }
+        if (studentExists) {
+            throw new ApiError(400, "Student already exists")
+        }
 
-    if (!student) {
-        throw new ApiError(400, "Couldn't create student")
-    }
+        const student = await Student.create({
+            userId: req.userId,
+            semester,
+            usn,
+            department,
+            phone,
+            seat
+        })
 
-    await Payment.create({
-        studentId:student._id,
-        balance: 1 + Math.random() * 10000,
-        // amountPaid
-    })
+        if (!student) {
+            throw new ApiError(400, "Couldn't create student")
+        }
 
-    return res.json(
-        new ApiResponse(200, "Student created successfully")
-    )
+        await Payment.create({
+            studentId: student._id,
+            balance: 1 + Math.random() * 10000,
+        })
+
+        return res.json(
+            new ApiResponse(200, "Student created successfully")
+        )
     } catch (error) {
-        console.log(error);  
+        console.log(error);
         throw new ApiError(500, "Something went wrong", error)
     }
 })
